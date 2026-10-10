@@ -15,6 +15,8 @@
 #pragma once
 
 #include "eqlib/Common.h"
+#include "eqlib/SizeChecks.h"
+#include "eqlib/graphics/Bones.h"
 #include "eqlib/graphics/GraphicsEngine.h"
 #include "eqlib/graphics/NodePool.h"
 
@@ -101,6 +103,10 @@ using CActorList = TList<CActorNode>;
 struct CActorInterfaceNode : TDataNode<CActorInterfaceNode, CActorInterface> {};
 using CActorInterfaceList = TList<CActorInterfaceNode>;
 
+class CActorDataBase;
+
+struct CActorDataBaseNode : TDataNode<CActorDataBaseNode, CActorDataBase> {};
+
 
 //============================================================================
 // ActorDefinitionInterface
@@ -108,6 +114,8 @@ using CActorInterfaceList = TList<CActorInterfaceNode>;
 
 class CActorDefinition;
 class CActorDefinitionServer;
+
+class CActorTree;
 
 class CActorDefinitionInterface
 {
@@ -301,6 +309,63 @@ public:
 class [[offsetcomments]] CActor : public CActorInterface
 {
 public:
+/*0x4b0*/ virtual void* GetDPVSObject() = 0;
+/*0x4b8*/ virtual void SetDPVSObject(void*) = 0;
+/*0x4c0*/ virtual void* GetSimpleModel() = 0;
+/*0x4c8*/ virtual void* GetHierarchicalModel() = 0;
+/*0x4d0*/ virtual void* GetParticleCloud() = 0;
+/*0x4d8*/ virtual EMemoryPoolManagerType GetMemoryPoolManagerType() const = 0;
+/*0x4e0*/ virtual int QueueForRender(uint32_t, const CVector3*, const CVector3*) = 0;
+/*0x4e8*/ virtual int Render(void*, uint32_t, void*, void*) = 0;
+/*0x4f0*/ virtual void SetScaleFactor(float) = 0;
+/*0x4f8*/ virtual const CMatrix44* GetWorldMatrixConst() const = 0;
+/*0x500*/ virtual CMatrix44* GetWorldMatrix() = 0;
+/*0x508*/ virtual const CVector3* GetOrientationPtrConst() const = 0;
+/*0x510*/ virtual CVector3* GetOrientationPtr() = 0;
+/*0x518*/ virtual void SetOrientation(const CVector3*) = 0;
+/*0x520*/ virtual int GetSurfacePitchType() const = 0;
+/*0x528*/ virtual uint32_t GetActorFlags() const = 0;
+/*0x530*/ virtual void AddActorFlags(uint32_t) = 0;
+/*0x538*/ virtual void RemoveActorFlags(uint32_t) = 0;
+/*0x540*/ virtual void SetActorFlags(uint32_t) = 0;
+/*0x548*/ virtual void ClearActorFlags() = 0;
+/*0x550*/ virtual void GetModelBoundingSphere(CVector3* center, float* radius) = 0;
+/*0x558*/ virtual void SetDefinition(CActorDefinitionInterface*) = 0;
+/*0x560*/ virtual void SetHighlightTint(const RGB*) = 0;
+/*0x568*/ virtual void ApplyMaterialTint(const RGB*) = 0;
+/*0x570*/ virtual void* GetMaterialPalette() = 0;
+/*0x578*/ virtual void DetachBonesFromAnimTracks(CBoneGroupInterface* parentBoneGroup, CActor* parent) = 0;
+/*0x580*/ virtual void* GetAnimTrackByName(const char*) = 0;
+/*0x588*/ virtual void AttachBonesToAnimTracks(CActor* parent, void* parentAttachPoint, int slot) = 0;
+/*0x590*/ virtual CMatrix44* GetPositionMatrix() = 0;
+/*0x598*/ virtual void SetCollisionVolumeType(int) = 0;
+/*0x5a0*/ virtual void SetActorTree(CActorTree*) = 0;
+/*0x5a8*/ virtual bool IsS3DCreated() const = 0;
+/*0x5b0*/ virtual void SetS3DCreated(bool) = 0;
+/*0x5b8*/ virtual bool HasParentBone() const = 0;
+/*0x5c0*/ virtual void SetHasParentBone(bool) = 0;
+/*0x5c8*/ virtual void SetParentActor(CActor*) = 0;
+/*0x5d0*/ virtual CActor* GetParentActor() const = 0;
+/*0x5d8*/ virtual CActor* GetRootActor() = 0;
+/*0x5e0*/ virtual float GetCumulativeScaleFactor() = 0;
+/*0x5e8*/ virtual bool IsHierarchicalModel() const = 0;
+/*0x5f0*/ virtual bool IsSimpleModel() const = 0;
+/*0x5f8*/ virtual bool IsParticleCloud() const = 0;
+/*0x600*/ virtual bool IsBeyondClipDistance() = 0;
+/*0x608*/ virtual bool GetNeverClip() const = 0;
+/*0x610*/ virtual void SetNeverClip(bool) = 0;
+/*0x618*/ virtual bool IsClientCreated() const = 0;
+/*0x620*/ virtual void SetClientCreated(bool) = 0;
+/*0x628*/ virtual void CalculateStaticLighting() = 0;
+/*0x630*/ virtual void CopyMaterialsFrom(CActor* src) = 0;
+/*0x638*/ virtual CActor* GetNextActor() const = 0;
+/*0x640*/ virtual void SetNextActor(CActor*) = 0;
+/*0x648*/ virtual CActor* GetPrevActor() const = 0;
+/*0x650*/ virtual void SetPrevActor(CActor*) = 0;
+/*0x658*/ virtual void ClearAnimatedThisFrame() = 0;
+
+	const CMatrix44* GetWorldMatrix() const { return GetWorldMatrixConst(); }
+
 /*0x008*/ EMemoryPoolManagerType memoryPoolManagerType;
 /*0x00c*/ bool                   bIsS3DCreated;
 /*0x00d*/ bool                   bHasParentBone;
@@ -335,7 +400,8 @@ public:
 /*0x101*/ bool                   bDisableDesignOverride;
 
 // everything after this point is technically part of subclasses via CActorDataBase
-/*0x108*/ uint64_t               pad[2];
+/*0x108*/ uint64_t               pad;
+/*0x110*/ void*                  actorDataBaseVftable;
 /*0x118*/ CMatrix44              positionMtx;
 /*0x158*/ CVector3               orientation;
 /*0x164*/ int                    actorIndex;
@@ -347,9 +413,49 @@ public:
 /*0x184*/ float                  boundingRadius;
 /*0x188*/ uint32_t               collisionRestrictionMask;
 /*0x18c*/ int                    collisionGroup;
-/*0x190*/
-// additional stuff
+/*0x190*/ CActorTree*            pActorTree;
+/*0x198*/ CActorDataBaseNode     actorTreeNode;
+/*0x1b8*/ int                    collisionVolumeType;
+/*0x1bc*/ float                  collisionVolumeRadius;
+/*0x1c0*/ float                  actorDataCollisionSphereScaleFactor;
+/*0x1c8*/ CActor*                pActor;
+/*0x1d0*/ CActorDefinitionInterface* pDefinition;
+/*0x1d8*/ CActor*                pNextActor;
+/*0x1e0*/ CActor*                pPrevActor;
+/*0x1e8*/ void*                  pModel;
+/*0x1f0*/
 };
+
+constexpr size_t CHierarchicalActor_size = 0x340; // @sizeof(CHierarchicalActor) :: 2026-09-17 (live) @ 0x18009907D
+
+class [[offsetcomments]] CHierarchicalActor : public CActor
+{
+public:
+/*0x660*/ virtual void SetActorIndex(int) = 0;
+/*0x668*/ virtual void SetActorTag(const char*) = 0;
+/*0x670*/ virtual void SetActorName(const char*) = 0;
+
+/*0x1f0*/ bool                   bAnimatedThisFrame;
+/*0x1f8*/ CBoneInterface*        pBones[eNumBones];
+/*0x2d8*/ CBoneGroupInterface*   pBoneGroups[3];
+/*0x2f0*/ CStringSprite*         pStringSprite;
+/*0x2f8*/ uint32_t               headMeshMask;
+/*0x2fc*/ uint32_t               bodyMeshMask;
+/*0x300*/ bool                   bInvisibleAsAttachment;
+/*0x301*/ bool                   bSpawnScaling;
+/*0x304*/ uint32_t               spawnScalingStartTime;
+/*0x308*/ int                    spawnScalingDuration;
+/*0x30c*/ float                  pitchOffset;
+/*0x310*/ float                  rollOffset;
+/*0x314*/ float                  targetPitchOffset;
+/*0x318*/ float                  targetRollOffset;
+/*0x31c*/ float                  verticalCameraOffset;
+/*0x320*/ bool                   bDynamicBoundingSphereUpdates;
+/*0x328*/ HashTable<CBoneInterface*, CXStr> boneTable;
+/*0x340*/
+};
+
+SIZE_CHECK(CHierarchicalActor, CHierarchicalActor_size);
 
 using EQSWITCH DEPRECATE("Use CActor instead of EQSWITCH") = CActor;
 using PEQSWITCH DEPRECATE("Use CActor* instead of PEQSWITCH") = CActor*;

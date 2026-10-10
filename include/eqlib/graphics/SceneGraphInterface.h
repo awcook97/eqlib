@@ -69,7 +69,7 @@ public:
 	virtual ~CSceneGraphInterfaceBase();
 
 	virtual EStatus CreateActorInstance(CActorDefinitionInterface*, CVector3*, CVector3*, ECollisionVolumeType,
-		float, float, float, bool, bool, bool, bool, CActorInterfaceBase**, const CCollisionGroup&) = 0;
+		float, float, float, bool, bool, bool, bool, CActorInterfaceBase**, const CCollisionGroup&, int, bool) = 0;
 	virtual EStatus DestroyActor(CActorInterfaceBase* pActor) = 0;
 	virtual CActorInterfaceBase* GetActorBaseInstance(const char* name) = 0;
 	virtual CActorInterfaceBase* GetActorBaseInstanceByName(const char* name) = 0;
@@ -99,7 +99,7 @@ class CSceneGraphInterface : public CSceneGraphInterfaceBase
 {
 public:
 	virtual EStatus CreateActorInstance(CActorDefinitionInterface*, CVector3*, CVector3*, ECollisionVolumeType,
-		float, float, float, bool, bool, bool, bool, CActorInterface**, const CCollisionGroup&) = 0;
+		float, float, float, bool, bool, bool, bool, CActorInterface**, const CCollisionGroup&, int, bool) = 0;
 	virtual EStatus CreateDuplicateActorInstance(CActorInterface*, CActorInterface**, bool) = 0;
 	virtual EStatus DestroyActor(CActorInterface*) = 0;
 	virtual CActorInterface* GetACtorInstance(const char*) = 0;

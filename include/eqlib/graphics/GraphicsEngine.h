@@ -15,6 +15,7 @@
 #pragma once
 
 #include "eqlib/Common.h"
+#include "eqlib/SizeChecks.h"
 
 #include "eqlib/game/ForwardDecls.h"
 #include "eqlib/game/Color.h"
@@ -342,8 +343,25 @@ public:
 	virtual CXStr& GetText() = 0;
 
 	virtual void SetParameters(int fontStyle, const CXRect& rect, const CXRect& clipRect, COLORREF color, uint16_t flags, int offset) = 0;
-	virtual void SetParameters(int fontStyle, int x, int y, int width, int height, const CXRect& clipRect, COLORREF color, uint16_t flags, int offset) = 0;
+	virtual void SetParameters(int fontStyle, int x, int y, int width, const CXRect& clipRect, COLORREF color, uint16_t flags, int offset) = 0;
 };
+
+struct FONT_D3DTLVERTEX;
+
+constexpr size_t CTextPageRun_size = 0x18; // @sizeof(CTextPageRun) :: 2026-09-17 (live) @ 0x180102639
+
+struct [[offsetcomments]] CTextPageRun
+{
+/*0x00*/ bool                     bActive;
+/*0x04*/ uint32_t                 page;
+/*0x08*/ int                      glyphCount;
+/*0x10*/ CTextPageRun*            pNext;
+/*0x18*/
+};
+
+SIZE_CHECK(CTextPageRun, CTextPageRun_size);
+
+constexpr size_t CTextObjectBase_size = 0x50; // @sizeof(CTextObjectBase) :: 2026-09-17 (live) @ 0x1801025D9
 
 class [[offsetcomments]] CTextObjectBase : public CTextObjectInterface
 {
@@ -357,6 +375,14 @@ public:
 			m_dirty = true;
 		}
 	}
+
+	void SetParameters(int fontStyle, const CXRect& rect, const CXRect& clipRect, COLORREF color, uint16_t flags, int offset) override {}
+	void SetParameters(int fontStyle, int x, int y, int width, const CXRect& clipRect, COLORREF color, uint16_t flags, int offset) override {}
+
+	virtual ~CTextObjectBase() {}
+	virtual void PrepareVB();
+	virtual void Render();
+	virtual void BuildGlyphs(FONT_D3DTLVERTEX* vertices) {}
 
 	COLORREF GetColor() const { return m_color;  }
 	const CXRect& GetRect() const { return m_rect; }
@@ -372,8 +398,13 @@ public:
 /*0x40*/ bool                     m_dirty;
 /*0x41*/ bool                     m_render;
 /*0x44*/ int                      m_maxLength;
-/*0x48*/
+/*0x48*/ CTextPageRun*            m_pageRuns;
+/*0x50*/
 };
+
+SIZE_CHECK(CTextObjectBase, CTextObjectBase_size);
+
+constexpr size_t CTextObject_size = 0x68; // @sizeof(CTextObject) :: 2026-09-17 (live) @ 0x180081936
 
 class [[offsetcomments]] CTextObject : public CTextObjectBase
 {
@@ -382,10 +413,136 @@ public:
 	uint16_t GetFlags() const { return m_flags; }
 
 private:
-/*0x48*/ CXRect                   m_clipRect;
-/*0x58*/ uint16_t                 m_flags;
-/*0x5c*/ int                      m_offset;
-/*0x60*/
+/*0x50*/ CXRect                   m_clipRect;
+/*0x60*/ uint16_t                 m_flags;
+/*0x64*/ int                      m_offset;
+/*0x68*/
+};
+
+SIZE_CHECK(CTextObject, CTextObject_size);
+
+struct [[offsetcomments]] CDeferredTextNode
+{
+/*0x00*/ CDeferredTextNode*       pPrev;
+/*0x08*/ CDeferredTextNode*       pNext;
+/*0x10*/ void*                    pOwnerList;
+/*0x18*/ CTextObjectBase*         pText;
+/*0x20*/
+};
+
+constexpr size_t CStringSpriteText_size = 0x78; // @sizeof(CStringSpriteText) :: 2026-09-17 (live) @ 0x1800F8339
+
+class [[offsetcomments]] CStringSpriteText : public CTextObjectBase
+{
+public:
+/*0x50*/ float                    m_z;
+/*0x54*/ float                    m_distance;
+/*0x58*/ CDeferredTextNode        m_deferred;
+/*0x78*/
+};
+
+SIZE_CHECK(CStringSpriteText, CStringSpriteText_size);
+
+constexpr size_t CStringSpriteBase_size = 0xb8; // @sizeof(CStringSpriteBase) :: 2026-09-17 (live) @ 0x180101D67
+
+class [[offsetcomments]] CStringSpriteBase
+{
+public:
+	virtual ~CStringSpriteBase() {}
+
+	CStringSpriteText* GetText() { return reinterpret_cast<CStringSpriteText*>(textStorage); }
+
+/*0x00*/ // vftable
+/*0x08*/ uint8_t                  textStorage[0x78];
+/*0x80*/ uint8_t                  tintB;
+/*0x81*/ uint8_t                  tintG;
+/*0x82*/ uint8_t                  tintR;
+/*0x84*/ int                      textWidth;
+/*0x88*/ int                      fontHeight;
+/*0x8c*/ float                    heightOffset;
+/*0x90*/ float                    scale;
+/*0x94*/ float                    sizeFactor;
+/*0x98*/ CVector3                 anchor;
+/*0xa4*/ float                    maxDistance;
+/*0xa8*/ float                    maxDistanceSq;
+/*0xac*/ float                    nearFade;
+/*0xb0*/ float                    fadeBand;
+/*0xb4*/ float                    minAlpha;
+/*0xb8*/
+};
+
+SIZE_CHECK(CStringSpriteBase, CStringSpriteBase_size);
+
+constexpr size_t CStringSprite_size = 0xc0; // @sizeof(CStringSprite) :: 2026-09-17 (live) @ 0x1800634FB
+
+class CEQBone;
+
+class [[offsetcomments]] CStringSprite : public CStringSpriteBase
+{
+public:
+/*0xb8*/ CEQBone*                 pAnchorBone;
+/*0xc0*/
+};
+
+SIZE_CHECK(CStringSprite, CStringSprite_size);
+
+enum E2DPrimitiveType : uint32_t
+{
+	Prim2D_Line         = 1,
+	Prim2D_ColoredQuad  = 2,
+	Prim2D_TexturedQuad = 3,
+	Prim2D_TintBlend    = 4,
+	Prim2D_OpaqueQuad   = 5,
+	Prim2D_CachedText   = 7,
+};
+
+constexpr size_t SPrim2D_size = 0x28; // @sizeof(SPrim2D) :: 2026-09-17 (live) @ 0x1800F7207
+
+struct [[offsetcomments]] SPrim2D
+{
+/*0x00*/ uint32_t                 type;                 // E2DPrimitiveType, | 0x80000000 on a batch head
+/*0x04*/ int                      count;
+/*0x08*/ int                      startVertex;
+/*0x10*/ void*                    texture;              // CTextObjectBase* for Prim2D_CachedText
+/*0x18*/ void*                    texture2;
+/*0x20*/ int                      arg;
+/*0x28*/
+};
+
+SIZE_CHECK(SPrim2D, SPrim2D_size);
+
+class [[offsetcomments]] C2DPrimitiveManager
+{
+public:
+/*0x00*/ SPrim2D*                 prims;
+/*0x08*/ CDeferredTextNode*       deferredHead;
+/*0x10*/ CDeferredTextNode*       deferredTail;
+/*0x18*/ int                      primCapacity;
+/*0x1c*/ int                      primCount;
+/*0x20*/ int                      linesMax;
+/*0x24*/ int                      linesCount;
+/*0x28*/ int                      coloredMax;
+/*0x2c*/ int                      coloredCount;
+/*0x30*/ int                      texturedMax;
+/*0x34*/ int                      texturedCount;
+/*0x38*/ int                      textMax;
+/*0x3c*/ int                      textCount;
+/*0x40*/ int                      deferredCount;
+/*0x48*/ IDirect3DIndexBuffer9*   pQuadIndices;
+/*0x50*/ int                      quadIndexCount;
+/*0x58*/ IDirect3DVertexBuffer9*  pTexturedVB;
+/*0x60*/ uint8_t*                 pTexturedLockBase;
+/*0x68*/ uint8_t*                 pTexturedWrite;
+/*0x70*/ bool                     bTexturedLocked;
+/*0x74*/ int                      texturedVertMax;
+/*0x78*/ int                      texturedVertCount;
+/*0x80*/ IDirect3DVertexBuffer9*  pColoredVB;
+/*0x88*/ uint8_t*                 pColoredLockBase;
+/*0x90*/ uint8_t*                 pColoredWrite;
+/*0x98*/ bool                     bColoredLocked;
+/*0x9c*/ int                      coloredVertMax;
+/*0xa0*/ int                      coloredVertCount;
+/*0xa8*/
 };
 
 //============================================================================

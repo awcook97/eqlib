@@ -163,7 +163,7 @@ public:
 /*0x070*/ virtual HRESULT WINAPI Unknown0x070() = 0;
 /*0x078*/ virtual HRESULT WINAPI Unknown0x078() = 0;
 /*0x080*/ virtual HRESULT WINAPI Unknown0x080() = 0;
-/*0x088*/ virtual HRESULT WINAPI Unknown0x088() = 0;
+/*0x088*/ virtual HRESULT WINAPI DrawIndexedPrimitive(D3DPRIMITIVETYPE PrimitiveType, INT BaseVertexIndex, UINT MinVertexIndex, UINT NumVertices, UINT StartIndex, UINT PrimitiveCount) = 0;
 /*0x090*/ virtual HRESULT WINAPI Unknown0x090() = 0;
 /*0x098*/ virtual HRESULT WINAPI CreateTexture(UINT Width, UINT Height, UINT Levels, DWORD Usage, D3DFORMAT Format, D3DPOOL Pool, Direct3DTexture9** ppTexture, HANDLE* pSharedHandle) = 0;
 /*0x0a0*/ virtual HRESULT WINAPI Clear(DWORD Count, const D3DRECT* pRects, DWORD Flags, D3DCOLOR Color, float Z, DWORD Stencil) = 0;
@@ -199,6 +199,18 @@ public:
 //SIZE_CHECK(DeviceImpl, DeviceImpl_size);
 
 // size: 0x60
+class [[offsetcomments]] VertexBufferImpl : public ObjectBase<VertexBufferImpl>
+{
+public:
+#pragma region Virtual Functions
+/*0x000*/ virtual UINT Release() = 0;
+/*0x008*/ virtual HRESULT WINAPI Unknown0x008() = 0;
+/*0x010*/ virtual HRESULT WINAPI Unknown0x010() = 0;
+/*0x018*/ virtual HRESULT WINAPI Lock(UINT OffsetToLock, UINT SizeToLock, void** ppbData, DWORD Flags) = 0;
+/*0x020*/ virtual HRESULT WINAPI Unlock() = 0;
+#pragma endregion
+};
+
 struct TextureInfo
 {
 /*0x00*/ uint32_t         field_0;

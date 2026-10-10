@@ -201,22 +201,59 @@ public:
 
 using CTargetRing DEPRECATE("Use FreeTargetTracker instead of CTargetRing") = CTargetRing;
 
+enum EQSuccessfulHitFlags : uint32_t
+{
+	SuccessfulHitFlag_WildRampage     = 0x00000001,
+	SuccessfulHitFlag_Rampage         = 0x00000002,
+	SuccessfulHitFlag_OverTime        = 0x00000004,
+	SuccessfulHitFlag_DoubleBowShot   = 0x00000008,
+	SuccessfulHitFlag_ForceSpellMsg   = 0x00000010,
+	SuccessfulHitFlag_Flurry          = 0x00000020,
+	SuccessfulHitFlag_Riposte         = 0x00000040,
+	SuccessfulHitFlag_Critical        = 0x00000080,
+	SuccessfulHitFlag_Lucky           = 0x00000100,
+	SuccessfulHitFlag_FinishingBlow   = 0x00000200,
+	SuccessfulHitFlag_CripplingBlow   = 0x00000400,
+	SuccessfulHitFlag_Assassinate     = 0x00000800,
+	SuccessfulHitFlag_DeadlyStrike    = 0x00001000,
+	SuccessfulHitFlag_SlayUndead      = 0x00002000,
+	SuccessfulHitFlag_Headshot        = 0x00004000,
+	SuccessfulHitFlag_Strikethrough   = 0x00008000,
+	SuccessfulHitFlag_LuckyRiposte    = 0x00010000,
+	SuccessfulHitFlag_Twincast        = 0x00020000,
+	SuccessfulHitFlag_ShieldBlock     = 0x00040000,
+	SuccessfulHitFlag_StaffBlock      = 0x00080000,
+	SuccessfulHitFlag_Locked          = 0x00100000,
+};
+
+enum EQSuccessfulHealFlags : uint32_t
+{
+	SuccessfulHealFlag_OverTime        = 0x00000001,
+	SuccessfulHealFlag_OverTimeChannel = 0x00000002,
+	SuccessfulHealFlag_Critical        = 0x00000004,
+	SuccessfulHealFlag_Lucky           = 0x00000008,
+	SuccessfulHealFlag_Twincast        = 0x00000010,
+	SuccessfulHealFlag_NoLandMessageA  = 0x00000020,
+	SuccessfulHealFlag_NoLandMessageB  = 0x00000040,
+};
 
 #pragma pack(push, 1)
-// fixme x64
 struct [[offsetcomments]] EQSuccessfulHit
 {
 /*0x00*/ uint16_t      DamagedID;                // Spawn that was hit
 /*0x02*/ uint16_t      AttackerID;               // Spawn who did the hit
-/*0x04*/ uint8_t       Skill;                    // 1 HS etc...
-/*0x05*/ int           SpellID;
-/*0x09*/ int           DamageCaused;
-/*0x0d*/ float         Force;
-/*0x11*/ float         HitHeading;
-/*0x15*/ float         HitPitch;
-/*0x19*/ bool          bSecondary;
-/*0x1a*/ uint8_t       Unknown0x1A[6];
-/*0x20*/
+/*0x04*/ uint8_t       Unknown0x04[4];
+/*0x08*/ int64_t       DamageCaused;
+/*0x10*/ uint32_t      Flags;
+/*0x14*/ int           SpellID;
+/*0x18*/ int           SpellLevel;
+/*0x1c*/ float         Force;
+/*0x20*/ float         HitHeading;
+/*0x24*/ float         HitPitch;
+/*0x28*/ uint8_t       Skill;                    // 1 HS etc...
+/*0x29*/ bool          bSecondary;
+/*0x2a*/ uint8_t       Unknown0x2A[6];
+/*0x30*/
 };
 #pragma pack(pop)
 using pEQSuccessfulHit DEPRECATE("Use EQSuccessfulHit* instead of pEQSuccessfulHit") = EQSuccessfulHit*;
@@ -226,10 +263,10 @@ struct [[offsetcomments]] EQSuccessfulHeal
 /*0x00*/ uint16_t      HealedID; // Spawn that was healed
 /*0x02*/ uint16_t      HealerID; // Spawn who did the healing
 /*0x04*/ int           SpellID;
-/*0x08*/ int           ActualHeal; // Amount that was actually healed
-/*0x0c*/ int           TotalHeal; // Amount that would have been healed if it didn't go over max HP
-/*0x10*/ uint32_t      EffectBitmask;
-/*0x14*/
+/*0x08*/ int64_t       ActualHeal; // Amount that was actually healed
+/*0x10*/ int64_t       TotalHeal; // Amount that would have been healed if it didn't go over max HP
+/*0x18*/ uint32_t      EffectBitmask;
+/*0x1c*/
 };
 using pEQSuccessfulHeal DEPRECATE("Use EQSuccessfulHeal* instead of pEQSuccessfulHeal") = EQSuccessfulHeal*;
 
