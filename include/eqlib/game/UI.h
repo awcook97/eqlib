@@ -1257,7 +1257,11 @@ public:
 /*0x2d0*/ CTextureAnimation*       ptaBackground;
 /*0x2d8*/ CTextureAnimation*       ptaEndCapLeft;
 /*0x2e0*/ CTextureAnimation*       ptaEndCapRight;
-/*0x2e8*/
+/*0x2e8*/ int                      Value;
+/*0x2ec*/ int                      TrackLength;
+/*0x2f0*/ int                      NumTicks;
+/*0x2f4*/ int                      ThumbOffset;
+/*0x2f8*/
 	// more ...
 };
 

@@ -66,6 +66,8 @@ CTextureAnimation* CButtonDrawTemplate::GetAnimation(bool pressed, bool hover, b
 
 			return ptaNormalDecal;
 		}
+
+		return ptaNormalDecal;
 	}
 	else // not a decal
 	{
