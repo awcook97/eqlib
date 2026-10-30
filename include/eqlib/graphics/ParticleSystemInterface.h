@@ -19,7 +19,6 @@
 #include "eqlib/graphics/GraphicsEngine.h"
 #include "eqlib/game/MathTypes.h"
 
-
 #include <cstdint>
 
 namespace eqlib {
@@ -35,40 +34,6 @@ class CParticlePointDefinition;
 class CSimpleModel;
 class CXStr;
 struct SEmitterDefinition;
-
-//----------------------------------------------------------------------------
-class CParticlePointInterface
-{
-public:
-/*0x00*/ virtual const CXStr& GetName() const = 0;
-/*0x08*/ virtual const CMatrix44* GetWorldMatrix() = 0;
-/*0x10*/ virtual const CVector3* GetLocalPosition() const = 0;
-};
-
-//----------------------------------------------------------------------------
-constexpr size_t CParticlePoint_size = 0x68; // @sizeof(CParticlePoint) :: 2026-09-17 (live) @ 0x18009FBA7
-
-class [[offsetcomments]] CParticlePoint : public CParticlePointInterface
-{
-public:
-/*0x00*/ // vftable
-/*0x08*/ CParticlePointDefinition* pDefinition;
-/*0x10*/ CMatrix44                 worldMatrix;
-/*0x50*/ void*                     pHierarchicalModel;
-/*0x58*/ CSimpleModel*             pSimpleModel;
-/*0x60*/ CEQBone*                  pBone;
-/*0x68*/
-};
-
-SIZE_CHECK(CParticlePoint, CParticlePoint_size);
-
-//----------------------------------------------------------------------------
-class CParticleSystemInterface
-{
-public:
-	virtual void UpdateAllEmittersScalingRadius(CActorInterface*) = 0;
-	virtual int LoadEmitterDefinitions() = 0;
-};
 
 //============================================================================
 // ParticlePointInterface
@@ -96,6 +61,22 @@ public:
 /*0x10*/ virtual CVector3& GetPositionOffset() = 0;     // the definition's Translation
 };
 
+constexpr size_t CParticlePoint_size = 0x68; // @sizeof(CParticlePoint) :: 2026-09-17 (live) @ 0x18009FBA7
+
+class [[offsetcomments]] CParticlePoint : public CParticlePointInterface
+{
+public:
+/*0x00*/ // vftable
+/*0x08*/ CParticlePointDefinition* pDefinition;
+/*0x10*/ CMatrix44                 worldMatrix;
+/*0x50*/ void*                     pHierarchicalModel;
+/*0x58*/ CSimpleModel*             pSimpleModel;
+/*0x60*/ CEQBone*                  pBone;
+/*0x68*/
+};
+
+SIZE_CHECK(CParticlePoint, CParticlePoint_size);
+
 //============================================================================
 // Emitter
 //============================================================================
@@ -118,6 +99,8 @@ public:
 /*0x50*/ virtual ~CEmitterInterface() {}
 };
 
+constexpr size_t CEmitter_size = 0xC8; // @sizeof(CEmitter) :: 2026-09-17 (live) @ 0x18009DD6D
+
 class [[offsetcomments]] CEmitter : public CEmitterInterface
 {
 public:
@@ -137,6 +120,8 @@ public:
 /*0xc8*/
 };
 
+SIZE_CHECK(CEmitter, CEmitter_size);
+
 // Returned by CSceneGraph::CreateParticleCloudInstance.
 class [[offsetcomments]] CParticleCloudInterface
 {
@@ -144,6 +129,10 @@ public:
 /*0x00*/ virtual ~CParticleCloudInterface() {}
 /*0x08*/ virtual CEmitterInterface* GetEmitterInterface() const = 0;
 };
+
+class CParticleSystemInterface
+{
+public:
 /*0x000*/ virtual void UpdateAllEmittersScalingRadius(CActorInterface* actor) = 0;
 /*0x008*/ virtual int LoadEmitterDefinitions() = 0;
 /*0x010*/ virtual bool IsSpellsDefInfiniteDuration(int defIndex) = 0;
@@ -302,67 +291,6 @@ struct [[offsetcomments]] SEmitterDefinition
 };
 
 SIZE_CHECK(SEmitterDefinition, SEmitterDefinition_size);
-
-class CEmitterInterface
-{
-public:
-/*0x00*/ virtual void SetScalingRadius(float radius, const SEmitterDefinition* def) = 0;
-/*0x08*/ virtual float GetRadiusScale() const = 0;
-/*0x10*/ virtual float GetBoundRadius() const = 0;
-/*0x18*/ virtual void SetIgnoreNearClip(bool ignoreNearClip) = 0;
-/*0x20*/ virtual bool GetIgnoreNearClip() const = 0;
-/*0x28*/ virtual void SetPosition(const CVector3& position) = 0;
-/*0x30*/ virtual void SetAxes(const CVector3* axes) = 0;
-/*0x38*/ virtual void SetTransformFromMatrix(const CMatrix44& matrix) = 0;
-/*0x40*/ virtual void SetRemainingTime(float remainingTime) = 0;
-/*0x48*/ virtual float GetRemainingTime() const = 0;
-/*0x50*/ virtual ~CEmitterInterface() {}
-};
-
-constexpr size_t CEmitter_size = 0xC8; // @sizeof(CEmitter) :: 2026-09-17 (live) @ 0x18009DD6D
-
-class [[offsetcomments]] CEmitter : public CEmitterInterface
-{
-public:
-/*0x00*/ // vftable
-/*0x08*/ bool                     valid;
-/*0x09*/ bool                     autoDeleteWhenEmpty;
-/*0x0a*/ bool                     hasFixedParticleCount;
-/*0x0c*/ int                      id;
-/*0x10*/ int                      maxParticles;
-/*0x14*/ int                      lastEmitTick;
-/*0x18*/ int                      emittedCount;
-/*0x1c*/ int                      burstCount;
-/*0x20*/ int                      emitPerTick;
-/*0x24*/ float                    ticksPerSecond;
-/*0x28*/ float                    duration;
-/*0x2c*/ float                    remainingTime;
-/*0x30*/ float                    alpha;
-/*0x34*/ float                    minBurstLod;
-/*0x38*/ float                    minRateLod;
-/*0x3c*/ float                    position[3];
-/*0x48*/ float                    axis0[3];
-/*0x54*/ float                    axis1[3];
-/*0x60*/ float                    axis2[3];
-/*0x70*/ CActor*                  pActor;
-/*0x78*/ CEQBone*                 pBone;
-/*0x80*/ CParticlePointInterface* pAttachObj;
-/*0x88*/ CParticle*               ringBegin;
-/*0x90*/ CParticle*               ringLast;
-/*0x98*/ CParticle*               head;
-/*0xa0*/ CParticle*               tail;
-/*0xa8*/ CEmitter*                pNext;
-/*0xb0*/ float                    scale;
-/*0xb4*/ float                    radiusScale;
-/*0xb8*/ float                    boundRadius;
-/*0xbc*/ bool                     ignoreNearClip;
-/*0xc0*/ int                      viewId;
-/*0xc4*/ uint8_t                  Unknown0xc4[0x4];
-/*0xc8*/
-
-};
-
-SIZE_CHECK(CEmitter, CEmitter_size);
 
 constexpr size_t CEmitterDefSlot_size = 0x38; // @sizeof(CEmitterDefSlot) :: 2026-09-17 (live) @ 0x18009F6A0
 
