@@ -34,6 +34,7 @@ class CParticlePointDefinition;
 class CSimpleModel;
 class CXStr;
 struct SEmitterDefinition;
+struct CParticle;
 
 //============================================================================
 // ParticlePointInterface
