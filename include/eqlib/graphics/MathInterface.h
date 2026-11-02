@@ -47,7 +47,7 @@ struct [[offsetcomments]] SArcTanNode
 /*0x18*/
 };
 
-constexpr size_t CMath_size = 0x1C08; // @sizeof(CMath) :: 2026-09-17 (live) @ 0x180019F05
+constexpr size_t CMath_size = 0x1C08; // @sizeof(CMath) :: 2026-10-19 (live) @ 0x180019F05
 
 class [[offsetcomments]] CMath : public CMathInterface
 {

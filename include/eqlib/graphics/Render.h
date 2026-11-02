@@ -183,7 +183,7 @@ struct [[offsetcomments]] SModeInfo
 };
 
 //----------------------------------------------------------------------------
-constexpr size_t SDevice_size = 0xe4; // @sizeof(SDevice) :: 2026-09-17 (live) @ 0x1800D9EC4
+constexpr size_t SDevice_size = 0xe4; // @sizeof(SDevice) :: 2026-10-19 (live) @ 0x1800DB814
 
 struct [[offsetcomments]] SDevice
 {
@@ -447,7 +447,7 @@ public:
 };
 
 //----------------------------------------------------------------------------
-constexpr size_t CRender_size = 0xf9f0; // @sizeof(CRender) :: 2026-09-17 (live) @ 0x180019E75
+constexpr size_t CRender_size = 0xf9f0; // @sizeof(CRender) :: 2026-10-19 (live) @ 0x180019E75
 
 class [[offsetcomments]] CRender : public CRenderInterface
 {

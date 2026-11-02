@@ -348,7 +348,7 @@ public:
 
 struct FONT_D3DTLVERTEX;
 
-constexpr size_t CTextPageRun_size = 0x18; // @sizeof(CTextPageRun) :: 2026-09-17 (live) @ 0x180102639
+constexpr size_t CTextPageRun_size = 0x18; // @sizeof(CTextPageRun) :: 2026-10-19 (live) @ 0x180103F89
 
 struct [[offsetcomments]] CTextPageRun
 {
@@ -361,7 +361,7 @@ struct [[offsetcomments]] CTextPageRun
 
 SIZE_CHECK(CTextPageRun, CTextPageRun_size);
 
-constexpr size_t CTextObjectBase_size = 0x50; // @sizeof(CTextObjectBase) :: 2026-09-17 (live) @ 0x1801025D9
+constexpr size_t CTextObjectBase_size = 0x50; // @sizeof(CTextObjectBase) :: 2026-10-19 (live) @ 0x180103F29
 
 class [[offsetcomments]] CTextObjectBase : public CTextObjectInterface
 {
@@ -404,7 +404,7 @@ public:
 
 SIZE_CHECK(CTextObjectBase, CTextObjectBase_size);
 
-constexpr size_t CTextObject_size = 0x68; // @sizeof(CTextObject) :: 2026-09-17 (live) @ 0x180081936
+constexpr size_t CTextObject_size = 0x68; // @sizeof(CTextObject) :: 2026-10-19 (live) @ 0x180083286
 
 class [[offsetcomments]] CTextObject : public CTextObjectBase
 {
@@ -430,7 +430,7 @@ struct [[offsetcomments]] CDeferredTextNode
 /*0x20*/
 };
 
-constexpr size_t CStringSpriteText_size = 0x78; // @sizeof(CStringSpriteText) :: 2026-09-17 (live) @ 0x1800F8339
+constexpr size_t CStringSpriteText_size = 0x78; // @sizeof(CStringSpriteText) :: 2026-10-19 (live) @ 0x1800F9C89
 
 class [[offsetcomments]] CStringSpriteText : public CTextObjectBase
 {
@@ -443,7 +443,7 @@ public:
 
 SIZE_CHECK(CStringSpriteText, CStringSpriteText_size);
 
-constexpr size_t CStringSpriteBase_size = 0xb8; // @sizeof(CStringSpriteBase) :: 2026-09-17 (live) @ 0x180101D67
+constexpr size_t CStringSpriteBase_size = 0xb8; // @sizeof(CStringSpriteBase) :: 2026-10-19 (live) @ 0x1801036B7
 
 class [[offsetcomments]] CStringSpriteBase
 {
@@ -473,7 +473,7 @@ public:
 
 SIZE_CHECK(CStringSpriteBase, CStringSpriteBase_size);
 
-constexpr size_t CStringSprite_size = 0xc0; // @sizeof(CStringSprite) :: 2026-09-17 (live) @ 0x1800634FB
+constexpr size_t CStringSprite_size = 0xc0; // @sizeof(CStringSprite) :: 2026-10-19 (live) @ 0x180064E4B
 
 class CEQBone;
 
@@ -496,7 +496,7 @@ enum E2DPrimitiveType : uint32_t
 	Prim2D_CachedText   = 7,
 };
 
-constexpr size_t SPrim2D_size = 0x28; // @sizeof(SPrim2D) :: 2026-09-17 (live) @ 0x1800F7207
+constexpr size_t SPrim2D_size = 0x28; // @sizeof(SPrim2D) :: 2026-10-19 (live) @ 0x1800F8B57
 
 struct [[offsetcomments]] SPrim2D
 {

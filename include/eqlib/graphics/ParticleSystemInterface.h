@@ -61,7 +61,7 @@ public:
 /*0x10*/ virtual CVector3& GetPositionOffset() = 0;     // the definition's Translation
 };
 
-constexpr size_t CParticlePoint_size = 0x68; // @sizeof(CParticlePoint) :: 2026-09-17 (live) @ 0x18009FBA7
+constexpr size_t CParticlePoint_size = 0x68; // @sizeof(CParticlePoint) :: 2026-10-19 (live) @ 0x1800A14F7
 
 class [[offsetcomments]] CParticlePoint : public CParticlePointInterface
 {
@@ -99,24 +99,44 @@ public:
 /*0x50*/ virtual ~CEmitterInterface() {}
 };
 
-constexpr size_t CEmitter_size = 0xC8; // @sizeof(CEmitter) :: 2026-09-17 (live) @ 0x18009DD6D
+constexpr size_t CEmitter_size = 0xC8; // @sizeof(CEmitter) :: 2026-10-19 (live) @ 0x18009F6BD
 
 class [[offsetcomments]] CEmitter : public CEmitterInterface
 {
 public:
+/*0x00*/ // vftable
 /*0x08*/ bool                     bInitialized;       // set once the particle buffer is allocated
-/*0x09*/ uint8_t                  Unknown0x0009[0x10 - 0x09];
+/*0x09*/ bool                     autoDeleteWhenEmpty;
+/*0x0a*/ bool                     hasFixedParticleCount;
+/*0x0c*/ int                      id;
 /*0x10*/ int                      MaxParticles;
-/*0x14*/ uint8_t                  Unknown0x0014[0x3c - 0x14];
+/*0x14*/ int                      lastEmitTick;
+/*0x18*/ int                      emittedCount;
+/*0x1c*/ int                      burstCount;
+/*0x20*/ int                      emitPerTick;
+/*0x24*/ float                    ticksPerSecond;
+/*0x28*/ float                    duration;
+/*0x2c*/ float                    remainingTime;
+/*0x30*/ float                    alpha;
+/*0x34*/ float                    minBurstLod;
+/*0x38*/ float                    minRateLod;
 /*0x3c*/ CVector3                 Position;
 /*0x48*/ CMatrix33                Orientation;
 /*0x6c*/ uint8_t                  Unknown0x006c[0x70 - 0x6c];
 /*0x70*/ CActorInterface*         pActor;
-/*0x78*/ void*                    Unknown0x0078;      // position source, used ahead of pActor
+/*0x78*/ CEQBone*                 pBone;              // position source, used ahead of pActor
 /*0x80*/ CParticlePointInterface* pAttachPoint;       // when set, the emitter follows it every frame
 /*0x88*/ void*                    pParticles;         // 0x80-byte particle records
 /*0x90*/ void*                    pParticlesEnd;      // pParticles + MaxParticles records
-/*0x98*/ uint8_t                  Unknown0x0098[0xc8 - 0x98];
+/*0x98*/ CParticle*               head;
+/*0xa0*/ CParticle*               tail;
+/*0xa8*/ CEmitter*                pNext;
+/*0xb0*/ float                    scale;
+/*0xb4*/ float                    radiusScale;
+/*0xb8*/ float                    boundRadius;
+/*0xbc*/ bool                     ignoreNearClip;
+/*0xc0*/ int                      viewId;
+/*0xc4*/ uint8_t                  Unknown0xc4[0x4];
 /*0xc8*/
 };
 
@@ -193,7 +213,7 @@ public:
 };
 
 //----------------------------------------------------------------------------
-constexpr size_t CParticle_size = 0x80; // @sizeof(CParticle) :: 2026-09-17 (live) @ 0x18009D60F
+constexpr size_t CParticle_size = 0x80; // @sizeof(CParticle) :: 2026-10-19 (live) @ 0x18009EF5F
 
 struct [[offsetcomments]] CParticle
 {
@@ -224,7 +244,7 @@ struct [[offsetcomments]] CParticle
 
 SIZE_CHECK(CParticle, CParticle_size);
 
-constexpr size_t SEmitterDefinition_size = 0x1A0; // @sizeof(SEmitterDefinition) :: 2026-09-17 (live) @ 0x1800B4126
+constexpr size_t SEmitterDefinition_size = 0x1A0; // @sizeof(SEmitterDefinition) :: 2026-10-19 (live) @ 0x1800B5A76
 
 struct [[offsetcomments]] SEmitterDefinition
 {
@@ -292,7 +312,7 @@ struct [[offsetcomments]] SEmitterDefinition
 
 SIZE_CHECK(SEmitterDefinition, SEmitterDefinition_size);
 
-constexpr size_t CEmitterDefSlot_size = 0x38; // @sizeof(CEmitterDefSlot) :: 2026-09-17 (live) @ 0x18009F6A0
+constexpr size_t CEmitterDefSlot_size = 0x38; // @sizeof(CEmitterDefSlot) :: 2026-10-19 (live) @ 0x1800A0FF0
 
 class [[offsetcomments]] CEmitterDefSlot
 {
@@ -343,7 +363,7 @@ struct [[offsetcomments]] SParticleCamera
 /*0x58*/
 };
 
-constexpr size_t SParticleTextureCacheEntry_size = 0x30; // @sizeof(SParticleTextureCacheEntry) :: 2026-09-17 (live) @ 0x1800B3762
+constexpr size_t SParticleTextureCacheEntry_size = 0x30; // @sizeof(SParticleTextureCacheEntry) :: 2026-10-19 (live) @ 0x1800B50B2
 
 struct [[offsetcomments]] SParticleTextureCacheEntry
 {
@@ -355,7 +375,7 @@ struct [[offsetcomments]] SParticleTextureCacheEntry
 
 SIZE_CHECK(SParticleTextureCacheEntry, SParticleTextureCacheEntry_size);
 
-constexpr size_t CParticleSystem_size = 0x118; // @sizeof(CParticleSystem) :: 2026-09-17 (live) @ 0x180019EB4
+constexpr size_t CParticleSystem_size = 0x118; // @sizeof(CParticleSystem) :: 2026-10-19 (live) @ 0x180019EB4
 
 class [[offsetcomments]] CParticleSystem : public CParticleSystemInterface
 {

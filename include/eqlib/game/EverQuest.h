@@ -244,7 +244,7 @@ struct [[offsetcomments]] EQSuccessfulHit
 /*0x02*/ uint16_t      AttackerID;               // Spawn who did the hit
 /*0x04*/ uint8_t       Unknown0x04[4];
 /*0x08*/ int64_t       DamageCaused;
-/*0x10*/ uint32_t      Flags;
+/*0x10*/ EQSuccessfulHitFlags Flags;
 /*0x14*/ int           SpellID;
 /*0x18*/ int           SpellLevel;
 /*0x1c*/ float         Force;
@@ -265,7 +265,7 @@ struct [[offsetcomments]] EQSuccessfulHeal
 /*0x04*/ int           SpellID;
 /*0x08*/ int64_t       ActualHeal; // Amount that was actually healed
 /*0x10*/ int64_t       TotalHeal; // Amount that would have been healed if it didn't go over max HP
-/*0x18*/ uint32_t      EffectBitmask;
+/*0x18*/ EQSuccessfulHealFlags EffectBitmask;
 /*0x1c*/
 };
 using pEQSuccessfulHeal DEPRECATE("Use EQSuccessfulHeal* instead of pEQSuccessfulHeal") = EQSuccessfulHeal*;

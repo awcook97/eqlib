@@ -426,7 +426,7 @@ public:
 /*0x1f0*/
 };
 
-constexpr size_t CHierarchicalActor_size = 0x340; // @sizeof(CHierarchicalActor) :: 2026-09-17 (live) @ 0x18009907D
+constexpr size_t CHierarchicalActor_size = 0x340; // @sizeof(CHierarchicalActor) :: 2026-10-19 (live) @ 0x18009A9CD
 
 class [[offsetcomments]] CHierarchicalActor : public CActor
 {

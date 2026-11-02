@@ -198,7 +198,6 @@ public:
 //constexpr size_t DeviceImpl_size = 0x38; // 180128435
 //SIZE_CHECK(DeviceImpl, DeviceImpl_size);
 
-// size: 0x60
 class [[offsetcomments]] VertexBufferImpl : public ObjectBase<VertexBufferImpl>
 {
 public:
@@ -211,6 +210,7 @@ public:
 #pragma endregion
 };
 
+// size: 0x60
 struct TextureInfo
 {
 /*0x00*/ uint32_t         field_0;
